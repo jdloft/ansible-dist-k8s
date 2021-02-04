@@ -1,0 +1,5 @@
+---
+
+- name: Run dotfiles
+  command:
+    cmd: /root/.dotfiles/bin/dotfiles

@@ -1,0 +1,30 @@
+---
+#
+# Tasks to be applied to all servers
+#
+
+- name: Install common packages
+  dnf:
+    name:
+    - vim
+    - tmux
+    - git
+    - zsh
+    state: latest
+
+- name: Deploy dotfiles
+  git:
+    repo: 'https://github.com/jdloft/dotfiles.git'
+    dest: /root/.dotfiles
+    update: no
+  notify:
+    - Run dotfiles
+
+- name: Set zsh as shell
+  user:
+    name: root
+    shell: /usr/bin/zsh
+
+# Add further tasks for the common role (applied to all servers) to this playbook...
+
+...

@@ -1,0 +1,10 @@
+---
+
+wireguard_remote_directory: "/etc/wireguard"
+wireguard_port: "51820"
+wireguard_interface: "wg0"
+wireguard_conf_owner: "root"
+wireguard_conf_group: "root"
+wireguard_conf_mode: 0600
+
+...

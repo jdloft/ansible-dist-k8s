@@ -1,0 +1,15 @@
+---
+#
+# Tasks to be applied to all servers
+#
+
+- name: Install common packages
+  dnf:
+    name:
+    - vim
+    - tmux
+    state: latest
+
+# Add further tasks for the common role (applied to all servers) to this playbook...
+
+...
