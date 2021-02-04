@@ -43,6 +43,15 @@
   notify:
     - reconfigure firewall
 
+- name: Open masquerade on wireguard
+  ansible.posix.firewalld:
+    zone: internal
+    state: enabled
+    masquerade: 'yes'
+    permanent: yes
+  notify:
+    - reconfigure firewall
+
 - name: Open k3s ports
   ansible.posix.firewalld:
     zone: internal
