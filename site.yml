@@ -1,9 +1,15 @@
 ---
-- hosts: nodes
+- hosts: cluster
   roles:
     - common
     - node
 
-# Associate further roles to servers in specific group in this file...
+- hosts: master
+  roles:
+    - k3s/master
+
+- hosts: nodes
+  roles:
+    - k3s/node
 
 ...

@@ -1,85 +1,13 @@
 ---
 #
-# Tasks to be applied to some servers
+# Node tasks
 #
 
 - name: Run wireguard tasks
   include: wireguard.yml
 
-- name: Configure default zone
-  ansible.posix.firewalld:
-    zone: FedoraServer
-    state: enabled
-    interface: ens33
-    permanent: yes
+- name: Run firewall tasks
+  include: firewall.yml
 
-- name: Open masquerade
-  ansible.posix.firewalld:
-    zone: FedoraServer
-    state: enabled
-    masquerade: 'yes'
-    permanent: yes
-  notify:
-    - reconfigure firewall
-
-- name: Open wireguard port
-  ansible.posix.firewalld:
-    zone: FedoraServer
-    state: enabled
-    port: 51820/udp
-    permanent: yes
-  notify:
-    - reconfigure firewall
-
-- name: Configure internal zone
-  ansible.posix.firewalld:
-    zone: internal
-    state: enabled
-    interface: wg0
-    permanent: yes
-  notify:
-    - reconfigure firewall
-
-- name: Open k3s agent port
-  ansible.posix.firewalld:
-    zone: internal
-    port: 6443/tcp
-    permanent: yes
-    state: enabled
-  notify:
-    - reconfigure firewall
-
-- name: Open k3s Flannel VXLAN port
-  ansible.posix.firewalld:
-    zone: internal
-    port: 8472/udp
-    permanent: yes
-    state: enabled
-  notify:
-    - reconfigure firewall
-
-- name: Open k3s metrics port
-  ansible.posix.firewalld:
-    zone: internal
-    port: 10250/tcp
-    permanent: yes
-    state: enabled
-  notify:
-    - reconfigure firewall
-
-- name: Open k3s etcd port
-  ansible.posix.firewalld:
-    zone: internal
-    port: 2379-2380/tcp
-    permanent: yes
-    state: enabled
-  notify:
-    - reconfigure firewall
-
-- name: Download k3s
-  get_url:
-    url: 'https://github.com/k3s-io/k3s/releases/download/v1.19.7%2Bk3s1/k3s'
-    dest: /usr/local/bin/k3s
-    owner: 'root'
-    group: 'root'
-    mode: '0774'
+- name: Run k3s prerequisites tasks
+  include: k3s-prereq.yml

@@ -1,0 +1,82 @@
+---
+
+- name: Configure default zone
+  ansible.posix.firewalld:
+    zone: FedoraServer
+    state: enabled
+    interface: ens33
+    permanent: yes
+
+- name: Open k3s agent port to external
+  ansible.posix.firewalld:
+    zone: FedoraServer
+    port: 6443/tcp
+    permanent: yes
+    state: enabled
+  notify:
+    - reconfigure firewall
+
+- name: Open masquerade
+  ansible.posix.firewalld:
+    zone: FedoraServer
+    state: enabled
+    masquerade: 'yes'
+    permanent: yes
+  notify:
+    - reconfigure firewall
+
+- name: Open wireguard port
+  ansible.posix.firewalld:
+    zone: FedoraServer
+    state: enabled
+    port: 51820/udp
+    permanent: yes
+  notify:
+    - reconfigure firewall
+
+- name: Configure internal zone
+  ansible.posix.firewalld:
+    zone: internal
+    state: enabled
+    interface: wg0
+    permanent: yes
+  notify:
+    - reconfigure firewall
+
+- name: Open k3s agent port
+  ansible.posix.firewalld:
+    zone: internal
+    port: 6443/tcp
+    permanent: yes
+    state: enabled
+  notify:
+    - reconfigure firewall
+
+- name: Open k3s Flannel VXLAN port
+  ansible.posix.firewalld:
+    zone: internal
+    port: 8472/udp
+    permanent: yes
+    state: enabled
+  notify:
+    - reconfigure firewall
+
+- name: Open k3s metrics port
+  ansible.posix.firewalld:
+    zone: internal
+    port: 10250/tcp
+    permanent: yes
+    state: enabled
+  notify:
+    - reconfigure firewall
+
+- name: Open k3s etcd port
+  ansible.posix.firewalld:
+    zone: internal
+    port: 2379-2380/tcp
+    permanent: yes
+    state: enabled
+  notify:
+    - reconfigure firewall
+
+...
