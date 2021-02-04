@@ -3,10 +3,7 @@
 - name: Restart wireguard
   service:
     name: "wg-quick@{{ wireguard_interface }}"
-    state: "{{ item }}"
-  loop:
-  - stopped
-  - started
+    state: restarted
   when: >
     not wg_syncconf
   listen: "reconfigure wireguard"
