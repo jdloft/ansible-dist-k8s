@@ -4,7 +4,7 @@
   set_fact:
     extra_server_args: "--cluster-init --node-ip={{ node_ip }} --node-external-ip={{ node_external_ip }} --advertise-address={{ advertise_address }} --flannel-iface={{ wireguard_interface }}"
 
-- name: Copy K3s service file
+- name: Copy k3s service file
   register: k3s_service
   template:
     src: "k3s.service.j2"
@@ -12,12 +12,14 @@
     owner: root
     group: root
     mode: 0755
+  notify:
+    - reconfigure k3s
 
-- name: Enable and check K3s service
+- name: Enable and start k3s service
   systemd:
     name: k3s
     daemon_reload: yes
-    state: restarted
+    state: started
     enabled: yes
 
 - name: Wait for node-token
