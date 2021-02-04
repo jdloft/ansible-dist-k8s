@@ -112,4 +112,11 @@
   notify:
     - reconfigure wireguard
 
+# Service [[[1
+- name: Start and enable Wireguard service
+  service:
+    name: "wg-quick@{{ wireguard_interface }}"
+    state: started
+    enabled: yes
+
 ...
