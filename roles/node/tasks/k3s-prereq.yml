@@ -3,6 +3,9 @@
   selinux:
     state: disabled
 
+- name: Use cgroups unified hierarchy
+  command: grubby --update-kernel=ALL --args="systemd.unified_cgroup_hierarchy=0"
+
 - name: Enable IPv4 forwarding
   sysctl:
     name: net.ipv4.ip_forward

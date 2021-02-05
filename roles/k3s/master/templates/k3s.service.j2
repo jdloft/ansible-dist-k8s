@@ -1,3 +1,9 @@
+{%- macro etcd_hosts() -%}
+{%- for host in groups['etcd'] -%}
+{{ etcd_protocol }}://{{ hostvars[host]['node_ip'] }}:{{ etcd_client_port }}{% if not loop.last %},{% endif %}
+{%- endfor -%}
+{%- endmacro -%}
+
 [Unit]
 Description=Lightweight Kubernetes
 Documentation=https://k3s.io
@@ -7,7 +13,7 @@ After=network-online.target
 Type=notify
 ExecStartPre=-/sbin/modprobe br_netfilter
 ExecStartPre=-/sbin/modprobe overlay
-ExecStart=/usr/local/bin/k3s server {{ extra_server_args | default("") }}
+ExecStart=/usr/local/bin/k3s server {{ '--datastore-endpoint="' + etcd_hosts() + '"' }} {{ extra_server_args | default("") }}
 KillMode=process
 Delegate=yes
 # Having non-zero Limit*s causes performance problems due to accounting overhead

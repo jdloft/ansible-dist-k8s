@@ -2,7 +2,7 @@
 
 - name: Set extra server args
   set_fact:
-    extra_server_args: "--cluster-init --node-ip={{ node_ip }} --node-external-ip={{ node_external_ip }} --advertise-address={{ advertise_address }} --flannel-iface={{ wireguard_interface }}"
+    extra_server_args: "--node-ip={{ node_ip }} --node-external-ip={{ node_external_ip }} --advertise-address={{ advertise_address }} --flannel-iface={{ wireguard_interface }}"
 
 - name: Copy k3s service file
   register: k3s_service
@@ -65,10 +65,10 @@
     owner: "{{ ansible_user }}"
     mode: "u=rw,g=,o="
 
-- name: Replace https://localhost:6443 by https://master-ip:6443
+- name: Replace server in config with external ip
   command: >-
     k3s kubectl config set-cluster default
-      --server=https://{{ master_ip }}:6443
+      --server=https://{{ node_external_ip }}:6443
       --kubeconfig ~{{ ansible_user }}/.kube/config
   changed_when: true
 

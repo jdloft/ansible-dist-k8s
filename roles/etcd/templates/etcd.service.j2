@@ -1,11 +1,11 @@
 #jinja2: trim_blocks:False
-{%- macro cluster_hosts() -%}
-{%- for host in groups['cluster'] -%}
+{%- macro etcd_hosts() -%}
+{%- for host in groups['etcd'] -%}
 {{ host }}={{ etcd_protocol }}://{{ hostvars[host]['node_ip'] }}:{{ etcd_peer_port }}{% if not loop.last %},{% endif %}
 {%- endfor -%} 
 {%- endmacro -%}
 
-{%- set x=etcd_settings.__setitem__('initial-cluster',cluster_hosts()) -%}
+{%- set x=etcd_settings.__setitem__('initial-cluster',etcd_hosts()) -%}
 
 [Unit]
 Description=etcd
