@@ -13,8 +13,4 @@
     state: reloaded
   listen: "reconfigure firewall"
 
-- name: reload systemd
-  systemd:
-    daemon_reload: yes
-
 ...

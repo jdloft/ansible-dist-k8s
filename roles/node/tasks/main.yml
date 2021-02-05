@@ -1,16 +1,10 @@
 ---
-#
-# Node tasks
-#
 
 - name: Run wireguard tasks
   include: wireguard.yml
 
 - name: Run firewall tasks
   include: firewall.yml
-
-- name: Run etcd tasks
-  include: etcd.yml
 
 - name: Run k3s prerequisites tasks
   include: k3s-prereq.yml

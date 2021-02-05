@@ -1,4 +1,6 @@
 ---
+ansible_user: root
+remote_user: root
 
 wireguard_remote_directory: "/etc/wireguard"
 wireguard_port: "51820"
@@ -44,3 +46,4 @@ etcd_settings:
   "logger": "zap"
   # "log-outputs": "systemd/journal"
   "enable-v2": "true"
+...

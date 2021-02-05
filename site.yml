@@ -1,5 +1,5 @@
 ---
-- hosts: cluster
+- hosts: all
   roles:
     - common
     - node

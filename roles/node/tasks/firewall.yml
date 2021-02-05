@@ -52,7 +52,7 @@
   notify:
     - reconfigure firewall
 
-- name: Open k3s ports
+- name: Open k3s and etcd ports
   ansible.posix.firewalld:
     zone: internal
     port: "{{ item }}"
