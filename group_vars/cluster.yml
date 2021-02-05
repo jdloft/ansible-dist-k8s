@@ -8,6 +8,39 @@ wireguard_conf_group: "root"
 wireguard_conf_mode: 0600
 k3s_version: v1.19.7+k3s1
 systemd_dir: /etc/systemd/system
-master_ip: "{{ hostvars[groups['master'][0]]['advertise_address'] | default(groups['master'][0]) }}"
+master_ip: "{{  hostvars[groups['master'][0]]['advertise_address'] | default(groups['master'][0])  }}"
 
-...
+# etcd
+etcd_version: "3.4.14"
+etcd_client_port: "2379"
+etcd_peer_port: "2380"
+etcd_interface: "{{ wireguard_interface }}"
+etcd_conf_dir: "/etc/etcd"
+etcd_download_dir: "/opt/etcd"
+etcd_bin_dir: "/usr/local/bin"
+etcd_data_dir: "/var/lib/etcd"
+etcd_protocol: "http"
+
+etcd_settings:
+  "name": "{{ ansible_hostname }}"
+  "advertise-client-urls": "{{ etcd_protocol + '://' + node_ip + ':' + etcd_client_port }}"
+  "initial-advertise-peer-urls": "{{ etcd_protocol + '://' + node_ip + ':' + etcd_peer_port }}"
+  "listen-peer-urls": "{{ etcd_protocol + '://' + node_ip + ':' + etcd_peer_port + ',http://127.0.0.1:' + etcd_peer_port }}"
+  "listen-client-urls": "{{ etcd_protocol + '://' + node_ip + ':' + etcd_client_port + ',http://127.0.0.1:' + etcd_client_port }}"
+  "initial-cluster-token": "etcd-cluster-0"
+  "initial-cluster-state": "new"
+  # "auto-tls": ""
+  # "peer-auto-tls": ""
+  "data-dir": "{{ etcd_data_dir }}"
+  # "wal-dir": ""
+  "auto-compaction-retention": "0"
+  "snapshot-count": "100000"
+  "heartbeat-interval": "100"
+  "election-timeout": "1000"
+  "max-snapshots": "5"
+  "max-wals": "5"
+  "quota-backend-bytes": "0"
+  # "log-package-levels": ""
+  "logger": "zap"
+  # "log-outputs": "systemd/journal"
+  "enable-v2": "true"

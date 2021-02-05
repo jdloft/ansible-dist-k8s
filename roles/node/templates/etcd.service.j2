@@ -1,0 +1,28 @@
+#jinja2: trim_blocks:False
+{%- macro cluster_hosts() -%}
+{%- for host in groups['cluster'] -%}
+{{ host }}={{ etcd_protocol }}://{{ hostvars[host]['node_ip'] }}:{{ etcd_peer_port }}{% if not loop.last %},{% endif %}
+{%- endfor -%} 
+{%- endmacro -%}
+
+{%- set x=etcd_settings.__setitem__('initial-cluster',cluster_hosts()) -%}
+
+[Unit]
+Description=etcd
+Documentation=https://github.com/coreos
+
+[Service]
+ExecStart={{ etcd_bin_dir }}/etcd \
+{%- for setting in etcd_settings|sort %}
+{%-   if etcd_settings[setting] is defined and etcd_settings[setting] != "" %}
+  --{{ setting }}="{{ etcd_settings[setting] }}"{% if not loop.last %} \{% endif %}
+{%-   else %}
+  --{{ setting }}{% if not loop.last %} \{% endif %}
+{%-   endif %}
+{%- endfor %}
+Restart=on-failure
+RestartSec=5
+Type=notify
+
+[Install]
+WantedBy=multi-user.target
