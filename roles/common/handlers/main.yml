@@ -3,3 +3,16 @@
 - name: Run dotfiles
   command:
     cmd: /root/.dotfiles/bin/dotfiles
+
+- name: Restart wireguard
+  service:
+    name: "wg-quick@{{ wireguard_interface }}"
+    state: restarted
+  listen: "reconfigure wireguard"
+
+- name: Reload firewalld
+  systemd:
+    name: firewalld
+    enabled: yes
+    state: reloaded
+  listen: "reconfigure firewall"

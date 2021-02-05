@@ -2,7 +2,8 @@
 - hosts: all
   roles:
     - common
-    - node
+    - wireguard
+    - k3s
 
 - hosts: master
   roles:

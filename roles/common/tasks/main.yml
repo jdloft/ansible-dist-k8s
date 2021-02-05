@@ -1,14 +1,11 @@
 ---
-#
-# Tasks to be applied to all servers
-#
 
 - name: Install common packages
   dnf:
     name:
-    - vim
-    - tmux
     - git
+    - tmux
+    - vim
     - zsh
     state: latest
 
@@ -25,6 +22,7 @@
     name: root
     shell: /usr/bin/zsh
 
-# Add further tasks for the common role (applied to all servers) to this playbook...
+- name: Run firewall tasks
+  include: firewall.yml
 
 ...
