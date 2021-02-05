@@ -2,12 +2,12 @@
 
 - name: Set extra server args
   set_fact:
-    extra_server_args: "--node-ip={{ node_ip }} --node-external-ip={{ node_external_ip }} --advertise-address={{ advertise_address }} --flannel-iface={{ wireguard_interface }}"
+    extra_agent_args: "--node-ip={{ node_ip }} --node-external-ip={{ node_external_ip }} --advertise-address={{ advertise_address }} --flannel-iface={{ wireguard_interface }}"
 
 - name: Copy k3s service file
   template:
     src: "k3s.service.j2"
-    dest: "{{ systemd_dir }}/k3s.service"
+    dest: "{{ systemd_dir }}/k3s-node.service"
     owner: root
     group: root
     mode: 0755
@@ -16,19 +16,7 @@
 
 - name: Enable and start k3s service
   systemd:
-    name: k3s
+    name: k3s-node
     daemon_reload: yes
     state: started
     enabled: yes
-
-- name: Create kubectl symlink
-  file:
-    src: /usr/local/bin/k3s
-    dest: /usr/local/bin/kubectl
-    state: link
-
-- name: Create crictl symlink
-  file:
-    src: /usr/local/bin/k3s
-    dest: /usr/local/bin/crictl
-    state: link
