@@ -1,0 +1,14 @@
+---
+
+# Other tasks for longhorn
+
+- name: Install iscsi utils
+  dnf:
+    name: iscsi-initiator-utils
+    state: latest
+
+- name: Enable and start iscsi
+  service:
+    name: iscsid
+    enabled: yes
+    state: started

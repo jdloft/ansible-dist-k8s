@@ -1,10 +1,18 @@
 ---
-- name: Set SELinux to disabled state
+- name: Set SELinux to permissive
   selinux:
-    state: disabled
+    policy: targeted
+    state: permissive
+
+- name: Check if running unified cgroup hierarchy
+  command: grep "systemd.unified_cgroup_hierarchy=0" /proc/cmdline
+  register: check_cgroup_hierarchy
+  ignore_errors: yes
+  changed_when: no
 
 - name: Use cgroups unified hierarchy
   command: grubby --update-kernel=ALL --args="systemd.unified_cgroup_hierarchy=0"
+  when: check_cgroup_hierarchy.rc != 0
 
 - name: Enable IPv4 forwarding
   sysctl:
@@ -62,3 +70,6 @@
     owner: root
     group: root
     mode: 0755
+
+- name: Run longhorn tasks
+  include: longhorn.yml
