@@ -10,16 +10,13 @@
     state: latest
 
 - name: Deploy dotfiles
-  git:
-    repo: 'https://github.com/jdloft/dotfiles.git'
-    dest: /root/.dotfiles
-    update: no
-  notify:
-    - Run dotfiles
+  become: no
+  shell: "[ -d \"$HOME/.dotfiles\" ] || (git clone https://github.com/jdloft/dotfiles.git ~/.dotfiles && ~/.dotfiles/bin/dotfiles)"
+  ignore_errors: yes
 
 - name: Set zsh as shell
   user:
-    name: root
+    name: "{{ ansible_user }}"
     shell: /usr/bin/zsh
 
 - name: Run firewall tasks
