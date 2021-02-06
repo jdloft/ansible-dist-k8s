@@ -5,6 +5,14 @@
     - wireguard
     - k3s
 
+- hosts: wgpublic
+  roles:
+    - wireguard/public
+
+- hosts: wgprivate
+  roles:
+    - wireguard/private
+
 - hosts: master
   roles:
     - k3s/master

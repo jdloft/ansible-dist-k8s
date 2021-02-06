@@ -1,8 +1,15 @@
 #jinja2: lstrip_blocks:"True",trim_blocks:"True"
+{%- macro private_addresses() -%}
+,{%- for host in groups['wgprivate'] -%}
+{{ hostvars[host]['wireguard_address'] }}{% if not loop.last %},{% endif %}
+{%- endfor -%}
+{%- endmacro -%}
+
 {# Copyright (C) 2018-2020 Robert Wimmer
  # SPDX-License-Identifier: GPL-3.0-or-later
  #}
 # {{ ansible_managed }}
+# WireGuard public node configuration
 
 [Interface]
 # {{ inventory_hostname }}
@@ -44,34 +51,34 @@ PostDown = {{ wg_postdown }}
 {% if wireguard_save_config is defined %}
 SaveConfig = true
 {% endif %}
-{% for host in ansible_play_hosts %}
+{% for host in groups['wgpublic'] %}
 {%   if host != inventory_hostname %}
 
 [Peer]
 # {{ host }}
-PublicKey = {{hostvars[host].wireguard__fact_public_key}}
+PublicKey = {{ hostvars[host].wireguard__fact_public_key }}
 {%     if hostvars[host].wireguard_allowed_ips is defined %}
-AllowedIPs = {{hostvars[host].wireguard_allowed_ips}}
+AllowedIPs = {{ hostvars[host].wireguard_allowed_ips + private_addresses() }}
 {%     else %}
-AllowedIPs = {{ hostvars[host].wireguard_address.split('/')[0] }}/32
+AllowedIPs = {{ hostvars[host].wireguard_address.split('/')[0] + '/32' + private_addresses() }}
 {%     endif %}
 {%     if hostvars[host].wireguard_persistent_keepalive is defined %}
-PersistentKeepalive = {{hostvars[host].wireguard_persistent_keepalive}}
+PersistentKeepalive = {{ hostvars[host].wireguard_persistent_keepalive }}
 {%     endif %}
 {%     if hostvars[host].wireguard_port is defined and hostvars[host].wireguard_port is number %}
 {%       if hostvars[host].wireguard_endpoint is defined and hostvars[host].wireguard_endpoint != "" %}
-Endpoint = {{hostvars[host].wireguard_endpoint}}:{{hostvars[host].wireguard_port}}
+Endpoint = {{ hostvars[host].wireguard_endpoint }}:{{ hostvars[host].wireguard_port }}
 {%       else %}
-Endpoint = {{host}}:{{hostvars[host].wireguard_port}}
+Endpoint = {{ host }}:{{ hostvars[host].wireguard_port }}
 {%       endif %}
 {%     elif hostvars[host].wireguard_endpoint is defined %}
 {%       if hostvars[host].wireguard_endpoint != "" %}
-Endpoint = {{hostvars[host].wireguard_endpoint}}:{{wireguard_port}}
+Endpoint = {{ hostvars[host].wireguard_endpoint }}:{{ wireguard_port }}
 {%       else %}
 # No endpoint defined for this peer
 {%       endif %}
 {%     else %}
-Endpoint = {{host}}:{{wireguard_port}}
+Endpoint = {{ host }}:{{ wireguard_port }}
 {%     endif %}
 {%   endif %}
 {% endfor %}
