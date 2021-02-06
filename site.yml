@@ -5,10 +5,6 @@
     - wireguard
     - k3s
 
-- hosts: etcd
-  roles:
-    - etcd
-
 - hosts: wgpublic
   roles:
     - wireguard/public
@@ -16,6 +12,10 @@
 - hosts: wgprivate
   roles:
     - wireguard/private
+
+- hosts: etcd
+  roles:
+    - etcd
 
 - hosts: master
   roles:
