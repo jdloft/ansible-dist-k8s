@@ -8,6 +8,7 @@ wireguard_interface: "wg0"
 wireguard_conf_owner: "root"
 wireguard_conf_group: "root"
 wireguard_conf_mode: 0600
+wireguard_persistent_keepalive: 25
 k3s_version: v1.19.7+k3s1
 systemd_dir: /etc/systemd/system
 master_ip: "{{ hostvars[groups['master'][0]]['advertise_address'] | default(groups['master'][0]) }}"

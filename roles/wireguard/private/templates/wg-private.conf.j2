@@ -62,9 +62,7 @@ AllowedIPs = {{ hostvars[host].wireguard_allowed_ips + private_addresses() }}
 {%     else %}
 AllowedIPs = {{ hostvars[host].wireguard_address.split('/')[0] + '/32' + private_addresses() }}
 {%     endif %}
-{%     if hostvars[host].wireguard_persistent_keepalive is defined %}
-PersistentKeepalive = {{ hostvars[host].wireguard_persistent_keepalive }}
-{%     endif %}
+PersistentKeepalive = {{ wireguard_persistent_keepalive }}
 {%     if hostvars[host].wireguard_port is defined and hostvars[host].wireguard_port is number %}
 {%       if hostvars[host].wireguard_endpoint is defined and hostvars[host].wireguard_endpoint != "" %}
 Endpoint = {{ hostvars[host].wireguard_endpoint }}:{{ hostvars[host].wireguard_port }}
