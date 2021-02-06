@@ -1,15 +1,28 @@
 ---
 
+- name: Install firewalld
+  dnf:
+    name: firewalld
+    state: latest
+
+- name: Start firewalld
+  systemd:
+    name: firewalld
+    enabled: yes
+    state: started
+
 - name: Configure default zone
   ansible.posix.firewalld:
-    zone: FedoraServer
+    zone: "{{ firewalld_default_zone }}"
     state: enabled
-    interface: ens33
+    interface: "{{ public_interface }}"
     permanent: yes
+  notify:
+    - reconfigure firewall
 
 - name: Open k3s agent port to external
   ansible.posix.firewalld:
-    zone: FedoraServer
+    zone: "{{ firewalld_default_zone }}"
     port: 6443/tcp
     permanent: yes
     state: enabled
@@ -18,7 +31,7 @@
 
 - name: Open masquerade
   ansible.posix.firewalld:
-    zone: FedoraServer
+    zone: "{{ firewalld_default_zone }}"
     state: enabled
     masquerade: 'yes'
     permanent: yes
@@ -27,7 +40,7 @@
 
 - name: Open wireguard port
   ansible.posix.firewalld:
-    zone: FedoraServer
+    zone: "{{ firewalld_default_zone }}"
     state: enabled
     port: 51820/udp
     permanent: yes

@@ -1,8 +1,10 @@
 ---
-ansible_user: root
-remote_user: root
+ansible_user: jamison
+remote_user: jamison
+ansible_become: yes
 
-firewalld_default_zone: "FedoraServer"
+firewalld_default_zone: "public"
+public_interface: "eth0"
 wireguard_remote_directory: "/etc/wireguard"
 wireguard_port: "51820"
 wireguard_interface: "wg0"
