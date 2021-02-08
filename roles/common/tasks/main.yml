@@ -9,11 +9,6 @@
     - zsh
     state: latest
 
-- name: Deploy dotfiles
-  become: no
-  shell: "[ -d \"$HOME/.dotfiles\" ] || (git clone https://github.com/jdloft/dotfiles.git ~/.dotfiles && ~/.dotfiles/bin/dotfiles)"
-  ignore_errors: yes
-
 - name: Set zsh as shell
   user:
     name: "{{ ansible_user }}"
