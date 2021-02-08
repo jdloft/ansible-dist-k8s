@@ -47,11 +47,20 @@
   notify:
     - reconfigure firewall
 
-- name: Configure internal zone
+- name: Configure internal zone with wireguard interface
   ansible.posix.firewalld:
     zone: internal
     state: enabled
     interface: wg0
+    permanent: yes
+  notify:
+    - reconfigure firewall
+
+- name: Configure internal zone with cni interface
+  ansible.posix.firewalld:
+    zone: internal
+    state: enabled
+    interface: cni0
     permanent: yes
   notify:
     - reconfigure firewall
