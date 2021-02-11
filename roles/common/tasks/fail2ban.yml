@@ -1,0 +1,34 @@
+---
+
+- name: Install fail2ban
+  dnf:
+    name: fail2ban
+    state: latest
+
+- name: Start fail2ban
+  systemd:
+    name: fail2ban
+    enabled: yes
+    state: started
+
+- name: Copy jail config
+  template:
+    src: "jail.local.j2"
+    dest: "/etc/fail2ban/jail.local"
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - reconfigure jail
+
+- name: Copy sshd jail config
+  template:
+    src: "sshd.local.j2"
+    dest: "/etc/fail2ban/jail.d/sshd.local"
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - reconfigure jail
+
+...

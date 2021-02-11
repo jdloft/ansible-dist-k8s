@@ -17,4 +17,7 @@
 - name: Run firewall tasks
   include: firewall.yml
 
+- name: Run fail2ban tasks
+  include: fail2ban.yml
+
 ...

@@ -6,3 +6,10 @@
     enabled: yes
     state: reloaded
   listen: "reconfigure firewall"
+
+- name: Reload fail2ban
+  systemd:
+    name: fail2ban
+    enabled: yes
+    state: reloaded
+  listen: "reconfigure jail"
