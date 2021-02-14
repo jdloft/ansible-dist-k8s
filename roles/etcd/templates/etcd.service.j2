@@ -13,6 +13,11 @@ Documentation=https://github.com/coreos
 
 [Service]
 ExecStart={{ etcd_bin_dir }}/etcd \
+{%- if ansible_hostname == groups['etcd'][0] %}
+  --initial-cluster-state="new"{% if (etcd_settings|length>0) %} \{% endif %}
+{%- else %}
+  --initial-cluster-state="existing"{% if (etcd_settings|length>0) %} \{% endif %}
+{%-  endif %}
 {%- for setting in etcd_settings|sort %}
 {%-   if etcd_settings[setting] is defined and etcd_settings[setting] != "" %}
   --{{ setting }}="{{ etcd_settings[setting] }}"{% if not loop.last %} \{% endif %}
