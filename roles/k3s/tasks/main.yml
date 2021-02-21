@@ -7,12 +7,12 @@
 - name: Check if running unified cgroup hierarchy
   command: grep "systemd.unified_cgroup_hierarchy=0" /proc/cmdline
   register: check_cgroup_hierarchy
-  ignore_errors: yes
+  failed_when: check_cgroup_hierarchy.rc != 0 and check_cgroup_hierarchy.rc != 1
   changed_when: no
 
 - name: Use cgroups unified hierarchy
   command: grubby --update-kernel=ALL --args="systemd.unified_cgroup_hierarchy=0"
-  when: check_cgroup_hierarchy.rc != 0
+  when: check_cgroup_hierarchy.rc == 1
 
 - name: Enable IPv4 forwarding
   sysctl:
