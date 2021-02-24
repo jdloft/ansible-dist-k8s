@@ -1,12 +1,7 @@
 ---
 
-# - name: Restart wireguard
-#   service:
-#     name: "wg-quick@{{ wireguard_interface }}"
-#     state: restarted
-#   listen: "reconfigure wireguard"
-
-- name: Notify change
-  debug:
-    msg: "WireGuard has changed! Roll-restart"
+- name: Reload wireguard
+  service:
+    name: "wg-quick@{{ wireguard_interface }}"
+    state: reloaded
   listen: "reconfigure wireguard"

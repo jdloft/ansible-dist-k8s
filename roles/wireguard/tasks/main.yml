@@ -17,29 +17,11 @@
   tags:
     - wg-install
 
-- block:
-  # Key handling [[[1
-  - name: Register if config/private key already exists on target host
-    stat:
-      path: "{{ wireguard_remote_directory }}/{{ wireguard_interface }}.conf"
-    register: wireguard__register_config_file
-
-  - name: Get wg subcommands
-    command: "wg --help"
-    register: wireguard__register_subcommands
-    changed_when: false
-    check_mode: no
-
-  - name: Check if wg syncconf subcommand is available
-    set_fact:
-      wg_syncconf: "{{ 'syncconf:' in wireguard__register_subcommands.stdout }}"
-  tags:
-    - wg-generate-keys
-    - wg-config
-
-- name: Show syncconf subcommand status
-  debug:
-    var: wg_syncconf
+# Key handling [[[1
+- name: Register if config/private key already exists on target host
+  stat:
+    path: "{{ wireguard_remote_directory }}/{{ wireguard_interface }}.conf"
+  register: wireguard__register_config_file
 
 - block:
   - name: Generate WireGuard private key
