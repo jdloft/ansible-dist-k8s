@@ -1,19 +1,4 @@
 ---
-
-- name: Install common packages
-  dnf:
-    name:
-    - git
-    - tmux
-    - vim
-    - zsh
-    state: latest
-
-- name: Set zsh as shell
-  user:
-    name: "{{ ansible_user }}"
-    shell: /usr/bin/zsh
-
 - name: Run firewall tasks
   include: firewall.yml
 
