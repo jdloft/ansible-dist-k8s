@@ -2,7 +2,7 @@
 
 - name: Set extra server args
   set_fact:
-    extra_agent_args: "--node-ip={{ node_ip }} --node-external-ip={{ node_external_ip }} --flannel-iface={{ wireguard_interface }}"
+    extra_agent_args: "--node-ip={{ node_ip }} --node-external-ip={{ node_external_ip }} --flannel-backend=none"
 
 - name: Copy k3s service file
   template:
