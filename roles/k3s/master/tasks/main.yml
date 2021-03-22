@@ -2,7 +2,7 @@
 
 - name: Set extra server args
   set_fact:
-    extra_server_args: "--tls-san \"{{ node_external_ip }}\" --node-ip={{ node_ip }} --node-external-ip={{ node_external_ip }} --advertise-address={{ advertise_address }} --flannel-backend=none"
+    extra_server_args: "--tls-san \"{{ node_dns }}\" --tls-san \"{{ node_external_ip }}\" --node-ip={{ node_ip }} --node-external-ip={{ node_external_ip }} --advertise-address={{ advertise_address }} --flannel-backend=none --disable local-storage"
 
 - name: Copy k3s service file
   register: k3s_service
