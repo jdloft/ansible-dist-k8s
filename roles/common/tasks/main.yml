@@ -5,4 +5,7 @@
 - name: Run fail2ban tasks
   include: fail2ban.yml
 
+- name: Run Rook tasks
+  include: rook.yml
+
 ...
