@@ -1,5 +1,12 @@
 ---
+- hosts: localhost
+  gather_facts: False
+  become: no
+  roles:
+    - etcd-ca
+
 - hosts: all
+  become: yes
   roles:
     - common
     - wireguard
@@ -14,14 +21,17 @@
     - wireguard/private
 
 - hosts: etcd
+  become: yes
   roles:
     - etcd
 
 - hosts: master
+  become: yes
   roles:
     - k3s/master
 
 - hosts: nodes
+  become: yes
   roles:
     - k3s/node
 

@@ -1,30 +1,10 @@
 #jinja2: trim_blocks:False
-{%- macro etcd_hosts() -%}
-{%- for host in groups['etcd'] -%}
-{{ host }}={{ etcd_protocol }}://{{ hostvars[host]['node_ip'] }}:{{ etcd_peer_port }}{% if not loop.last %},{% endif %}
-{%- endfor -%} 
-{%- endmacro -%}
-
-{%- set x=etcd_settings.__setitem__('initial-cluster',etcd_hosts()) -%}
-
 [Unit]
 Description=etcd
 Documentation=https://github.com/coreos
 
 [Service]
-ExecStart={{ etcd_bin_dir }}/etcd \
-{%- if ansible_hostname == groups['etcd'][0] %}
-  --initial-cluster-state="new"{% if (etcd_settings|length>0) %} \{% endif %}
-{%- else %}
-  --initial-cluster-state="existing"{% if (etcd_settings|length>0) %} \{% endif %}
-{%-  endif %}
-{%- for setting in etcd_settings|sort %}
-{%-   if etcd_settings[setting] is defined and etcd_settings[setting] != "" %}
-  --{{ setting }}="{{ etcd_settings[setting] }}"{% if not loop.last %} \{% endif %}
-{%-   else %}
-  --{{ setting }}{% if not loop.last %} \{% endif %}
-{%-   endif %}
-{%- endfor %}
+ExecStart={{ etcd_bin_dir }}/etcd --config-file {{ etcd_conf_dir }}/etcd.conf.yaml
 Restart=on-failure
 RestartSec=5
 Type=notify

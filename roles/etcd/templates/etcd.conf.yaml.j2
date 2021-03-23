@@ -1,0 +1,36 @@
+#jinja2: trim_blocks:False
+{%- macro etcd_hosts() -%}
+{%- for host in groups['etcd'] -%}
+{{ host }}={{ etcd_protocol }}://{{ hostvars[host]['node_external_ip'] }}:{{ etcd_peer_port }}{% if not loop.last %},{% endif %}
+{%- endfor -%} 
+{%- endmacro -%}
+
+name: {{ inventory_hostname }}
+advertise-client-urls: {{ etcd_protocol + '://' + node_external_ip + ':' + etcd_client_port }}
+initial-advertise-peer-urls: {{ etcd_protocol + '://' + node_external_ip + ':' + etcd_peer_port }}
+listen-peer-urls: {{ etcd_protocol + '://' + node_external_ip + ':' + etcd_peer_port + ',http://127.0.0.1:' + etcd_peer_port }}
+listen-client-urls: {{ etcd_protocol + '://' + node_external_ip + ':' + etcd_client_port + ',http://127.0.0.1:' + etcd_client_port }}
+{%- if ansible_hostname == groups['etcd'][0] %}
+initial-cluster-state: new
+{%- else %}
+initial-cluster-state: existing
+{%-  endif %}
+initial-cluster: {{ etcd_hosts() }}
+initial-cluster-token: etcd-cluster-0
+data-dir: {{ etcd_data_dir }}
+snapshot-count: 100000
+heartbeat-interval: 100
+election-timeout: 1000
+max-snapshots: 5
+max-wals: 5
+quota-backend-bytes: 0
+logger: zap
+enable-v2: true
+client-transport-security:
+  cert-file: {{ etcd_conf_dir }}/ssl/server.crt
+  key-file: {{ etcd_conf_dir }}/ssl/server.key
+  trusted-ca-file: {{ etcd_conf_dir }}/ssl/ca.crt
+peer-transport-security:
+  cert-file: {{ etcd_conf_dir }}/ssl/server.crt
+  key-file: {{ etcd_conf_dir }}/ssl/server.key
+  trusted-ca-file: {{ etcd_conf_dir }}/ssl/ca.crt

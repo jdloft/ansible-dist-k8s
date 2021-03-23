@@ -2,10 +2,38 @@
 
 - name: Create etcd config directory
   file:
-    path: "{{ etcd_conf_dir }}"
+    path: "{{ etcd_conf_dir }}/ssl"
     state: directory
+    recurse: yes
   tags:
     - etcd
+
+- name: "Copy etcd CA certificate"
+  copy:
+    src: ./certs/ca.crt
+    remote_src: no
+    dest: "{{ etcd_conf_dir }}/ssl/ca.crt"
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Copy etcd SSL cert
+  copy:
+    src: ./certs/{{ inventory_hostname }}.crt
+    remote_src: no
+    dest: "{{ etcd_conf_dir }}/ssl/server.crt"
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Copy etcd SSL key
+  copy:
+    src: ./certs/{{ inventory_hostname }}.key
+    remote_src: no
+    dest: "{{ etcd_conf_dir }}/ssl/server.key"
+    owner: root
+    group: root
+    mode: 0600
 
 - name: Create etcd download directory
   file:
@@ -83,14 +111,22 @@
     - etcd
     - etcd-systemd
 
+- name: "Create configuration file for etcd"
+  template:
+    src: templates/etcd.conf.yaml.j2
+    dest: "{{ etcd_conf_dir }}/etcd.conf.yaml"
+    owner: root
+    group: root
+    mode: 0644
+
 - meta: flush_handlers
 
-- name: Enable and start etcd
-  service:
-    name: etcd
-    enabled: yes
-    state: started
-  tags:
-    - etcd
+# - name: Enable and start etcd
+#   service:
+#     name: etcd
+#     enabled: yes
+#     state: started
+#   tags:
+#     - etcd
 
 ...
