@@ -31,7 +31,13 @@
     state: enabled
   loop:
     - 6443/tcp
-    - "{{ wireguard_port }}/udp"
+    - 51820/udp # wireguard
+    - 2379-2380/tcp # etcd client and peer
+    # - 8472/udp # flannel VXLAN
+    - 10250/tcp # kubelet
+    - 179/tcp # calico BGP (BIRD)
+    - 5473/tcp # typha
+    - 4789/udp # calico VXLAN
   notify:
     - reconfigure firewall
 
@@ -44,65 +50,56 @@
   notify:
     - reconfigure firewall
 
-- name: Configure internal zone with wireguard interface
-  ansible.posix.firewalld:
-    zone: internal
-    state: enabled
-    interface: wg0
-    permanent: yes
-  notify:
-    - reconfigure firewall
-
-- name: Configure internal zone with cni interface
-  ansible.posix.firewalld:
-    zone: internal
-    state: enabled
-    interface: cni0
-    permanent: yes
-  notify:
-    - reconfigure firewall
-
-- name: Configure internal zone with flannel interface
-  ansible.posix.firewalld:
-    zone: internal
-    state: enabled
-    interface: flannel.1
-    permanent: yes
-  notify:
-    - reconfigure firewall
-
-# - name: Configure internal zone with tunnel interface
+# - name: Configure internal zone with wireguard interface
 #   ansible.posix.firewalld:
 #     zone: internal
 #     state: enabled
-#     interface: tunl0
+#     interface: wg0
 #     permanent: yes
 #   notify:
 #     - reconfigure firewall
 
-- name: Open masquerade on internal
-  ansible.posix.firewalld:
-    zone: internal
-    state: enabled
-    masquerade: 'yes'
-    permanent: yes
-  notify:
-    - reconfigure firewall
+# - name: Configure internal zone with cni interface
+#   ansible.posix.firewalld:
+#     zone: internal
+#     state: enabled
+#     interface: cni0
+#     permanent: yes
+#   notify:
+#     - reconfigure firewall
 
-- name: Open k3s and etcd ports
-  ansible.posix.firewalld:
-    zone: internal
-    port: "{{ item }}"
-    permanent: yes
-    state: enabled
-  loop:
-    - 6443/tcp # k8s api
-    - 8472/udp # flannel VXLAN
-    - 9100/tcp # prometheus node exporter
-    - 10250/tcp # kubelet
-    - 2379-2380/tcp # etcd client and peer
-    - 179/tcp # BGP for calico
-  notify:
-    - reconfigure firewall
+# - name: Configure internal zone with flannel interface
+#   ansible.posix.firewalld:
+#     zone: internal
+#     state: enabled
+#     interface: flannel.1
+#     permanent: yes
+#   notify:
+#     - reconfigure firewall
+
+# - name: Open masquerade on internal
+#   ansible.posix.firewalld:
+#     zone: internal
+#     state: enabled
+#     masquerade: 'yes'
+#     permanent: yes
+#   notify:
+#     - reconfigure firewall
+
+# - name: Open k3s and etcd ports
+#   ansible.posix.firewalld:
+#     zone: internal
+#     port: "{{ item }}"
+#     permanent: yes
+#     state: enabled
+#   loop:
+#     - 6443/tcp # k8s api
+#     - 8472/udp # flannel VXLAN
+#     - 9100/tcp # prometheus node exporter
+#     - 10250/tcp # kubelet
+#     - 2379-2380/tcp # etcd client and peer
+#     - 179/tcp # BGP for calico
+#   notify:
+#     - reconfigure firewall
 
 ...

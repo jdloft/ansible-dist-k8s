@@ -11,7 +11,14 @@
     size: 4096
     state: present
     # force: True
-  with_items: "{{ groups['etcd'] }}"
+  with_items: "{{ groups['etcd-access'] }}"
+
+- name: "Generate private key for cluster access"
+  openssl_privatekey:
+    path: ./certs/cluster.key
+    type: RSA
+    size: 4096
+    state: present
 
 - name: "Generate CSR for each member"
   openssl_csr:
@@ -28,7 +35,21 @@
       - IP:{{ hostvars[item]['node_external_ip'] }}
       - IP:127.0.0.1
     # force: True
-  with_items: "{{ groups['etcd'] }}"
+  with_items: "{{ groups['etcd-access'] }}"
+
+- name: "Generate CSR for cluster"
+  openssl_csr:
+    path: ./certs/cluster.csr
+    privatekey_path: ./certs/cluster.key
+    common_name: "localhost"
+    key_usage:
+      - digitalSignature
+    extended_key_usage:
+      - serverAuth
+      - clientAuth
+    subject_alt_name:
+      - IP:127.0.0.1
+      - DNS:localhost
 
 - name: "Generate private key for CA"
   openssl_privatekey:
@@ -69,4 +90,12 @@
     ownca_privatekey_path: ./certs/ca.key
     provider: ownca
     # force: True
-  with_items: "{{ groups['etcd'] }}"
+  with_items: "{{ groups['etcd-access'] }}"
+
+- name: "Generate an cluster certificate"
+  openssl_certificate:
+    path: ./certs/cluster.crt
+    csr_path: ./certs/cluster.csr
+    ownca_path: ./certs/ca.crt
+    ownca_privatekey_path: ./certs/ca.key
+    provider: ownca

@@ -1,4 +1,11 @@
 ---
+- name: Common packages
+  dnf:
+    name:
+    - net-tools
+    - gdisk
+    state: present
+
 - name: Run firewall tasks
   include: firewall.yml
 

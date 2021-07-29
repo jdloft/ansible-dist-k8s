@@ -9,16 +9,16 @@
   become: yes
   roles:
     - common
-    - wireguard
+
+- hosts: k3s
+  become: yes
+  roles:
     - k3s
 
-- hosts: wgpublic
+- hosts: etcd-access
+  become: yes
   roles:
-    - wireguard/public
-
-- hosts: wgprivate
-  roles:
-    - wireguard/private
+    - etcd-access
 
 - hosts: etcd
   become: yes
@@ -34,5 +34,10 @@
   become: yes
   roles:
     - k3s/node
+
+# - hosts: wgpublic
+  # become: yes
+  # roles:
+    # - wireguard/public
 
 ...
